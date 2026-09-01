@@ -13,16 +13,22 @@ import kotlinx.coroutines.launch
 
 sealed class WeatherState{
     object Loading: WeatherState()
+    object Idle : WeatherState()
     data class Succes(val data: WeatherModels.WeatherResponse) : WeatherState()
     data class Error(val message: String) : WeatherState()
 }
 
 class WeatherViewModel : ViewModel() {
-    private val _weatherState = MutableStateFlow<WeatherState>(WeatherState.Loading)
+    private val _weatherState = MutableStateFlow<WeatherState>(WeatherState.Idle)
     val weatherState : StateFlow<WeatherState> = _weatherState
     private val API_KEY = "7c72e7dfc0cc89d5397308b3e6f8d3c9"
     fun fetchWeather(city: String)
     {
+        if (city.isBlank())
+        {
+            _weatherState.value = WeatherState.Error("Введите название города")
+            return
+        }
         viewModelScope.launch {
             _weatherState.value = WeatherState.Loading
             try {
@@ -30,7 +36,7 @@ class WeatherViewModel : ViewModel() {
                 _weatherState.value = WeatherState.Succes(response)
             }catch (e: Exception)
             {
-                _weatherState.value = WeatherState.Error("Error:%{e.message}")
+                _weatherState.value = WeatherState.Error("Error:${e.message}")
             }
         }
     }

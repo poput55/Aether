@@ -79,7 +79,7 @@ fun WeatherScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { viewModel.fetchWeather(city) }, // Вызываем "Мозг"
+            onClick = { viewModel.fetchWeather(city) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Узнать погоду")
@@ -87,12 +87,12 @@ fun WeatherScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        when (val state = weatherState)
-        {
+        when (val state = weatherState) {
             is WeatherState.Loading -> {
                 CircularProgressIndicator()
                 Text("Загрузка", modifier = Modifier.padding(top = 8.dp))
             }
+
             is WeatherState.Succes -> {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -130,12 +130,28 @@ fun WeatherScreen(
                     }
                 }
             }
+
             is WeatherState.Error -> {
                 Text(
                     text = state.message,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyLarge
                 )
+            }
+
+            is WeatherState.Idle ->
+            {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Text(
+                        text = "Введите город и нажмите кнопку",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(32.dp)
+                    )
+                }
             }
         }
     }
